@@ -77,7 +77,7 @@ public class ObserverTest {
         assertThrows(NullPointerException.class, () -> {
             badScoreLogger.onTournamentOver(tr);
         });
-        
+
         assertThrows(NullPointerException.class, () -> {
             badMoveLogger.onMoveMade(event);
         });
@@ -85,6 +85,33 @@ public class ObserverTest {
         assertThrows(NullPointerException.class, () -> {
             badMoveLogger.onTournamentOver(tr);
         });
+        
+
+    }
+    @Test
+    //Scenario where we have a solid path but fail to write
+    public void testWrite() {
+        ScoreLogger badScoreLogger = new ScoreLogger("score_write.txt");
+        MoveLogger badMoveLogger = new MoveLogger("score_move.txt");
+        Participant p1 = new AlwaysCooperate();
+        Participant p2 = new AlwaysDefect();
+        
+       
+        Game game = new IteratedPrisonersDilemma(1);
+        GameResult gr = game.play(p1, p2);
+        
+        TournamentFormat tournament = new RoundRobin();
+        TournamentResult tr = tournament.run(Arrays.asList(p1, p2), game);
+        
+        RoundResult rr = new RoundResult(PrisonerAction.COOPERATE, PrisonerAction.DEFECT, 0, 5, 1);
+        GameHistory gh = new GameHistory(p1.getName(), p2.getName());
+        MoveEvent event = new MoveEvent(rr, gh);
+        badScoreLogger.onTournamentOver(tr);
+        badScoreLogger.onMoveMade(event);
+        badMoveLogger.onTournamentOver(tr);
+        badMoveLogger.onMoveMade(event);
+        
+
     }
     
 }
