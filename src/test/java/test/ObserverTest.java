@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import java.util.Arrays;
 import java.io.File;
-
+import java.nio.file.Files;
 import game.*;
 import participants.*;
 import observer.*;
@@ -23,7 +23,7 @@ public class ObserverTest {
     }
 
     @Test
-    public void testLogging() {
+    public void testLogging() throws Exception{
         String moveFile = "test_moves.txt";
         String scoreFile = "test_scores.txt";
         
@@ -47,11 +47,21 @@ public class ObserverTest {
         assertTrue(mFile.exists());
         assertTrue(sFile.exists());
         
-        // Clean up
+        String moveLogContent = Files.readString(mFile.toPath());
+        String scoreLogContent = Files.readString(sFile.toPath());
+        
+
+        assertTrue(moveLogContent.contains("Always Cooperate played COOPERAT"));
+        assertTrue(moveLogContent.contains("Always Defect played DEFECT"));
+        
+        
+        assertTrue(scoreLogContent.contains("Match Over -> Always Cooperate: 0 points | Always Defect: 5 points | Winner: Always Defect"));
+        assertTrue(scoreLogContent.contains("Match Over -> Always Cooperate: 0 points | Always Defect: 5 points | Winner: Always Defect"));
+        
         mFile.delete();
         sFile.delete();
     }
-
+    
     @Test
     public void testLoggerInvalidPath() {
         ScoreLogger badScoreLogger = new ScoreLogger("");
@@ -117,6 +127,7 @@ public class ObserverTest {
         closemove.onTournamentOver(tr);
         closemove.onTournamentOver(tr);
         
+
 
     }
     
